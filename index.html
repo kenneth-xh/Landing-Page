@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantEdge — Fund Managers Hate This. Your Wallet Won't.</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080a0f;
+    --dark: #0d1117;
+    --card: #111722;
+    --border: #1e2a3a;
+    --accent: #f0b429;
+    --accent2: #00d4aa;
+    --red: #ff4d4d;
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Barlow Condensed', sans-serif;
+    --body: 'Barlow', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(240,180,41,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(240,180,41,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(8,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--text); }
+
+  nav a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: var(--black) !important;
+    padding: 10px 22px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-cta:hover { background: #ffc84a !important; color: var(--black) !important; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 140px 24px 80px;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(240,180,41,0.3);
+    padding: 6px 16px;
+    margin-bottom: 36px;
+    display: inline-block;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    max-width: 900px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 580px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta {
+    animation: fadeUp 0.6s 0.3s ease both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--black);
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,180,41,0.3); }
+
+  .btn-note {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* TICKER */
+  .ticker {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--dark);
+    padding: 14px 0;
+    overflow: hidden;
+  }
+
+  .ticker-track {
+    display: flex;
+    gap: 60px;
+    animation: ticker 25s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .ticker-item span { color: var(--accent2); margin-left: 8px; }
+  .ticker-item .neg { color: var(--red); }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* STATS STRIP */
+  .stats {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat-item {
+    padding: 48px 40px;
+    border-right: 1px solid var(--border);
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .stat-value {
+    font-family: var(--sans);
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--sans);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 560px;
+    margin-bottom: 60px;
+  }
+
+  /* BENEFITS */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .benefit-card {
+    background: var(--card);
+    padding: 40px;
+    transition: background 0.2s;
+  }
+
+  .benefit-card:hover { background: #161e2e; }
+
+  .benefit-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .benefit-title {
+    font-family: var(--sans);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .benefit-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .benefit-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* CREDIBILITY */
+  .cred-section {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cred-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .cred-story p {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+
+  .cred-story p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .disclaimer {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    border-left: 2px solid var(--border);
+    padding-left: 16px;
+    margin-top: 24px;
+    opacity: 0.7;
+  }
+
+  .backtest-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 40px;
+  }
+
+  .backtest-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .backtest-row {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .backtest-item { }
+
+  .backtest-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .backtest-val {
+    font-family: var(--sans);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--muted);
+  }
+
+  .backtest-val.green { color: var(--accent2); }
+  .backtest-val.gold { color: var(--accent); }
+
+  .backtest-bar {
+    height: 4px;
+    background: var(--border);
+    margin-top: 10px;
+    position: relative;
+  }
+
+  .backtest-fill {
+    height: 100%;
+    transition: width 1.5s ease;
+  }
+
+  .fill-btc { background: var(--muted); width: 0%; }
+  .fill-quant { background: var(--accent); width: 0%; }
+
+  .skin-badge {
+    margin-top: 32px;
+    padding: 16px 20px;
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.2);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+  }
+
+  /* RISK */
+  .risk-section { }
+
+  .risk-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .risk-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  .risk-card {
+    background: var(--card);
+    padding: 40px 32px;
+  }
+
+  .risk-icon {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .risk-card h3 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .risk-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* PRICING */
+  .pricing-section {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+  }
+
+  .pricing-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  .pricing-card {
+    background: var(--card);
+    padding: 40px 32px;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .pricing-card:hover { background: #161e2e; }
+
+  .pricing-card.featured {
+    background: #0f1d2e;
+    border: 2px solid var(--accent);
+    margin: -1px;
+    z-index: 2;
+  }
+
+  .plan-badge {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--accent);
+    padding: 4px 12px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  .plan-name {
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .plan-price {
+    font-family: var(--mono);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .plan-period {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+  }
+
+  .plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .plan-features li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .plan-features li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  .plan-features li.included { color: var(--text); }
+
+  .btn-outline {
+    display: block;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-outline.featured-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--black);
+  }
+
+  .btn-outline.featured-btn:hover {
+    background: #ffc84a;
+    color: var(--black);
+  }
+
+  .trial-banner {
+    margin-top: 32px;
+    padding: 24px 32px;
+    background: rgba(240,180,41,0.06);
+    border: 1px solid rgba(240,180,41,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .trial-text {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .trial-text span { color: var(--accent); }
+
+  .trial-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* FAQs */
+  .faq-section { }
+
+  .faq-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  .faq-item {
+    background: var(--card);
+    overflow: hidden;
+  }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 28px 32px;
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    transition: background 0.2s;
+  }
+
+  .faq-q:hover { background: #161e2e; }
+
+  .faq-arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+  }
+
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.8;
+    padding: 0 32px;
+  }
+
+  .faq-item.open .faq-a {
+    max-height: 300px;
+    padding: 0 32px 28px;
+  }
+
+  /* FINAL CTA */
+  .final-cta {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .final-cta-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 120px 48px;
+  }
+
+  .final-cta h2 {
+    font-family: var(--sans);
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+
+  .final-cta h2 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .final-cta p {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  footer p {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* GLOW */
+  .hero-glow {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(240,180,41,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    nav .nav-links { display: none; }
+    .hero { padding: 120px 20px 60px; }
+    .section-inner { padding: 70px 20px; }
+    .stats { grid-template-columns: 1fr; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .benefits-grid { grid-template-columns: 1fr; }
+    .cred-inner { grid-template-columns: 1fr; gap: 40px; padding: 70px 20px; }
+    .risk-cards { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pricing-card.featured { margin: 0; }
+    .faq-inner { padding: 70px 20px; }
+    .final-cta-inner { padding: 80px 20px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
+    .trial-banner { flex-direction: column; text-align: center; }
+    .risk-inner { padding: 70px 20px; }
+    .pricing-inner { padding: 70px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Quant<span>Edge</span></div>
+  <div class="nav-links" style="display:flex;gap:32px;align-items:center;">
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#pricing" class="nav-cta">Start $19 Trial</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">No Fund Manager. No Bias. No Mercy.</div>
+  <h1>Fund Managers Hate This.<br><em>Your Wallet</em> Won't.</h1>
+  <p>A quant system built to outperform Bitcoin every cycle — no emotion, no bias, no one taking a cut of your gains.</p>
+  <div class="hero-cta">
+    <a href="#pricing" class="btn-primary">Start My $19 Trial</a>
+    <span class="btn-note">// Full access · Cancel anytime · 1-year performance guarantee</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">BTC/USDT <span>↑ Long Signal Active</span></span>
+    <span class="ticker-item">Cycle Valuation <span>Relatively Cheap</span></span>
+    <span class="ticker-item">Portfolio Updated <span>00:10 UTC Daily</span></span>
+    <span class="ticker-item">Quant System <span>Trade 3 — In Profit</span></span>
+    <span class="ticker-item">Benchmark <span>BTC Buy & Hold</span></span>
+    <span class="ticker-item">Strategy <span>Trend Following + Relative Strength</span></span>
+    <span class="ticker-item">BTC/USDT <span>↑ Long Signal Active</span></span>
+    <span class="ticker-item">Cycle Valuation <span>Relatively Cheap</span></span>
+    <span class="ticker-item">Portfolio Updated <span>00:10 UTC Daily</span></span>
+    <span class="ticker-item">Quant System <span>Trade 3 — In Profit</span></span>
+    <span class="ticker-item">Benchmark <span>BTC Buy & Hold</span></span>
+    <span class="ticker-item">Strategy <span>Trend Following + Relative Strength</span></span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item reveal">
+    <div class="stat-label">// Quant System Return (Backtest)</div>
+    <div class="stat-value">58,536%</div>
+    <div class="stat-sub">RM10,000 → RM5,863,626 since 2018</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-label">// BTC Buy & Hold Return</div>
+    <div class="stat-value">347%</div>
+    <div class="stat-sub">RM10,000 → RM44,707 same period</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-label">// Target Annual Return</div>
+    <div class="stat-value">40%+</div>
+    <div class="stat-sub">Year-on-year realistic target</div>
+  </div>
+</div>
+
+<!-- BENEFITS -->
+<section id="how">
+  <div class="section-inner">
+    <span class="section-tag reveal">// What You Get</span>
+    <h2 class="section-title reveal">Four Weapons.<br>Zero Guesswork.</h2>
+    <p class="section-sub reveal">Our quantitative system won't win every trade — but it's designed to outperform Bitcoin over every full market cycle.</p>
+
+    <div class="benefits-grid">
+      <div class="benefit-card reveal">
+        <span class="benefit-num">01 //</span>
+        <div class="benefit-title">Know <em>exactly</em> what to buy. Stop freezing at the chart.</div>
+        <p class="benefit-desc">No more staring at 500 coins wondering where to put your money. Get a daily-updated portfolio allocation built by a quant system — not emotion, not hype.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <span class="benefit-num">02 //</span>
+        <div class="benefit-title">Is Bitcoin cheap right now? <em>We'll tell you.</em></div>
+        <p class="benefit-desc">Our cycle valuation tells you exactly where we are in the market cycle — so you buy with conviction, not FOMO, and hold through volatility without panic.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <span class="benefit-num">03 //</span>
+        <div class="benefit-title">Profit when it pumps. <em>Profit when it dumps.</em></div>
+        <p class="benefit-desc">Get clear long and short signals for Bitcoin. When the trend reverses, you'll know before most — and be positioned to capture momentum in both directions.</p>
+      </div>
+      <div class="benefit-card reveal">
+        <span class="benefit-num">04 //</span>
+        <div class="benefit-title">Institution-grade intel. <em>Zero finance degree required.</em></div>
+        <p class="benefit-desc">Institution-grade market analysis delivered to you every week. Know what the smart money is doing — without needing a finance degree to understand it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDIBILITY -->
+<section class="cred-section">
+  <div class="cred-inner">
+    <div class="cred-story reveal">
+      <span class="section-tag">// The Founder</span>
+      <h2 class="section-title" style="margin-bottom:32px;">I Lost Money To Fund Managers Too.<br><em>So I Built This.</em></h2>
+      <p>I built this because I was tired of watching <strong>fund managers lose my money and still collect their fees.</strong> So I built something that removes human bias completely — a quantitative system that makes portfolio decisions based purely on data.</p>
+      <p>I'll be honest: <strong>the system has taken 2 losses so far.</strong> The third trade is live and currently in profit. I use this system with my own money. This isn't theory.</p>
+      <p>The system uses trend-following analysis to lock in profits and cut losses the moment a reversal is detected. Portfolio weighting is determined by relative strength — so your money always flows toward the highest momentum, lowest-risk assets.</p>
+      <div class="disclaimer">* Backtest results are based on historical data and are not indicative of future performance. Past performance does not guarantee future results.</div>
+    </div>
+
+    <div class="backtest-card reveal">
+      <div class="backtest-title">// Backtest Comparison — 2018 to Present</div>
+      <div class="backtest-row">
+        <div class="backtest-item">
+          <div class="backtest-label">BTC Buy & Hold</div>
+          <div class="backtest-val green">RM44,707</div>
+          <div class="backtest-bar"><div class="backtest-fill fill-btc" id="btcBar"></div></div>
+          <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-top:6px;">Starting capital: RM10,000</div>
+        </div>
+        <div class="backtest-item" style="margin-top:8px;">
+          <div class="backtest-label">QuantEdge System</div>
+          <div class="backtest-val gold">RM5,863,626</div>
+          <div class="backtest-bar"><div class="backtest-fill fill-quant" id="quantBar"></div></div>
+          <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-top:6px;">Same capital: RM10,000</div>
+        </div>
+      </div>
+      <div class="skin-badge">
+        ✓ Founder invests own capital using this system
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISK REVERSAL -->
+<section class="risk-section">
+  <div class="risk-inner">
+    <span class="section-tag reveal">// Risk Reversal</span>
+    <h2 class="section-title reveal">Your Downside Is Covered.<br><em>Theirs Never Was.</em></h2>
+
+    <div class="risk-cards">
+      <div class="risk-card reveal">
+        <span class="risk-icon">🧪</span>
+        <h3>$19 Gets You In. No Strings.</h3>
+        <p>Start with a full 1-month trial for just <strong style="color:var(--accent)">$19</strong>. See the portfolio, signals, and cycle valuation in action — before committing to any annual plan.</p>
+      </div>
+      <div class="risk-card reveal">
+        <span class="risk-icon">🛡️</span>
+        <h3>Lose Money Following Us? We Pay You Back.</h3>
+        <p>Subscribe for a full year, follow the signals, and end up with a negative return? <strong style="color:var(--accent)">We'll refund you.</strong> No fine print. No questions asked. Applies to all tiers.</p>
+      </div>
+      <div class="risk-card reveal">
+        <span class="risk-icon">🚫</span>
+        <h3>Flat Fee. We Never Touch Your Gains.</h3>
+        <p>You pay a flat subscription. We never take a cut of your gains, never charge performance fees, and never touch your funds. Your crypto stays yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <span class="section-tag reveal">// Pricing</span>
+    <h2 class="section-title reveal">Pick Your Level.<br>Kill The Guesswork.</h2>
+    <p class="section-sub reveal">All plans include the core quant system. Upgrade when you're ready for more.</p>
+
+    <div class="pricing-grid">
+      <!-- Basic -->
+      <div class="pricing-card reveal">
+        <div class="plan-name">Core</div>
+        <div class="plan-price">$39</div>
+        <div class="plan-period">/ month</div>
+        <ul class="plan-features">
+          <li class="included">Daily Portfolio Allocation</li>
+          <li class="included">Cycle Valuation (updated daily)</li>
+          <li>Bitcoin Long/Short Signals</li>
+          <li>Weekly Research Report</li>
+        </ul>
+        <a href="#" class="btn-outline">Get Core Access</a>
+      </div>
+
+      <!-- Pro (Featured) -->
+      <div class="pricing-card featured reveal">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$69</div>
+        <div class="plan-period">/ month</div>
+        <ul class="plan-features">
+          <li class="included">Daily Portfolio Allocation</li>
+          <li class="included">Cycle Valuation (updated daily)</li>
+          <li class="included">Bitcoin Long/Short Signals</li>
+          <li>Weekly Research Report</li>
+        </ul>
+        <a href="#" class="btn-outline featured-btn">Get Pro Access</a>
+      </div>
+
+      <!-- Elite -->
+      <div class="pricing-card reveal">
+        <div class="plan-name">Elite</div>
+        <div class="plan-price">$169</div>
+        <div class="plan-period">/ month</div>
+        <ul class="plan-features">
+          <li class="included">Daily Portfolio Allocation</li>
+          <li class="included">Cycle Valuation (updated daily)</li>
+          <li class="included">Bitcoin Long/Short Signals</li>
+          <li class="included">Institution-Grade Weekly Report</li>
+        </ul>
+        <a href="#" class="btn-outline">Get Elite Access</a>
+      </div>
+    </div>
+
+    <div class="trial-banner reveal">
+      <div>
+        <div class="trial-text">Not ready to commit? Try everything for <span>$19</span></div>
+        <div class="trial-note">Full 1-month access · All Core features · Cancel anytime</div>
+      </div>
+      <a href="#" class="btn-primary" style="white-space:nowrap;">Start My $19 Trial</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQs -->
+<section id="faq">
+  <div class="faq-inner">
+    <span class="section-tag reveal">// FAQs</span>
+    <h2 class="section-title reveal">Still Skeptical?<br>Good. Read This.</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">
+          I'm new to crypto — is this for me?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Yes, absolutely. As long as you know how to buy and sell cryptocurrencies on an exchange, you can follow our signals and portfolio allocation. No technical analysis knowledge needed — we do the thinking, you execute the trades.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          How does the quant system actually work?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">The system uses trend-following analysis to lock in profits and cut losses the moment a trend reversal is detected. Portfolio allocation is determined by relative strength analysis — so your money is always weighted toward the highest momentum, lowest-risk crypto assets available.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          What do I get access to after subscribing?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Immediately after subscribing you'll get access to our live crypto portfolio and cycle valuation, updated daily at 00:10 UTC. You can mirror the allocation with up to 20% of your liquid net worth — or simply accumulate Bitcoin during periods when the cycle valuation shows the market is cheap.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          The backtest returns look too good — can I trust these numbers?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">Fair skepticism. Backtests are idealized simulations of the past and are not indicative of future results. That said, the system is designed to mirror its historical behavior going forward. We're not promising 55,000% — but achieving 40% year-on-year returns is a realistic target. The system is continuously updated to maintain its edge.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          What's the difference between the three plans?
+          <span class="faq-arrow">+</span>
+        </button>
+        <div class="faq-a">The $39 Core plan gives you daily Portfolio Allocation and Cycle Valuation — the heart of the system. The $69 Pro plan adds Bitcoin Long/Short Signals so you can profit in both bull and bear markets. The $169 Elite plan includes everything plus an institution-grade Weekly Research Report for subscribers who want the full picture.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="final-cta-inner">
+    <h2>Your Fund Manager<br>Is <em>Already Losing</em> Your Money.</h2>
+    <p>Join working Malaysians who stopped trusting gut feelings and started investing with a system — flat fee, no hidden cuts, no excuses.</p>
+    <a href="#" class="btn-primary">Start My $19 Trial</a>
+    <div style="margin-top:16px;font-family:var(--mono);font-size:0.7rem;color:var(--muted);letter-spacing:0.05em;">
+      1-year performance guarantee · All tiers · No fine print
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="logo" style="font-size:0.8rem;">Quant<span style="color:var(--text)">Edge</span></p>
+  <p>© 2025 QuantEdge. Not financial advice. Past performance does not guarantee future results.</p>
+</footer>
+
+<script>
+  // SCROLL REVEAL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // FAQ ACCORDION
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // BACKTEST BARS ANIMATION
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          document.getElementById('btcBar').style.width = '8%';
+          document.getElementById('quantBar').style.width = '100%';
+        }, 300);
+        barObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  const btcBar = document.getElementById('btcBar');
+  if (btcBar) barObserver.observe(btcBar.closest('.backtest-card'));
+</script>
+</body>
+</html>
